@@ -19,7 +19,7 @@ $match = $router->match();
     <?php
     foreach($match as $key => $value) {
       echo '<p>' . $key . ': ';
-      if($is_array($value)) {
+      if(is_array($value)) {
           echo '<ul>';
             foreach($value as $k => $v) {
                 echo '<li>'.$k.': '.$v.'</li>';

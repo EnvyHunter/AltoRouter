@@ -1,6 +1,6 @@
 <?php
 
-require 'AltoRouter.php';
+require dirname(__DIR__) . '/AltoRouter.php';
 
 class AltoRouterDebug extends AltoRouter{
 

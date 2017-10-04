@@ -16,9 +16,22 @@ $match = $router->match();
 
 <h3>Current request: </h3>
 <pre>
-	Target: <?php var_dump($match['target']); ?>
-	Params: <?php var_dump($match['params']); ?>
-	Name: 	<?php var_dump($match['name']); ?>
+    <?php
+    foreach($match as $key => $value) {
+      echo '<p>' . $key . ': ';
+      if($is_array($value)) {
+          echo '<ul>';
+            foreach($value as $k => $v) {
+                echo '<li>'.$k.': '.$v.'</li>';
+            }
+          echo '</ul>';
+      }
+      else {
+          echo $value;
+      }
+      echo '</p>';
+    }
+    ?>
 </pre>
 
 <h3>Try these requests: </h3>

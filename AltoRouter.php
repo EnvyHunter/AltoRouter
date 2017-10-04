@@ -122,7 +122,10 @@ class AltoRouter {
 		if (preg_match_all('`(/|\.|)\[([^:\]]*+)(?::([^:\]]*+))?\](\?|)`', $route, $matches, PREG_SET_ORDER)) {
 
 			foreach($matches as $match) {
-				list($block, $pre, $type, $param, $optional) = $match;
+
+				$block  = $match[0];
+				$pre    = $match[1];
+				$param  = $match[3];
 
 				if ($pre) {
 					$block = substr($block, 1);
@@ -130,7 +133,7 @@ class AltoRouter {
 
 				if(isset($params[$param])) {
 					$url = str_replace($block, $params[$param], $url);
-				} elseif ($optional) {
+				} elseif ($match[4]) {
 					$url = str_replace($pre . $block, '', $url);
 				}
 			}
@@ -150,23 +153,12 @@ class AltoRouter {
 	public function match($requestUrl = null, $requestMethod = null) {
 
 		$params = array();
-		$match = false;
+		$match  = false;
 
-		// set Request Url if it isn't passed as parameter
-		if($requestUrl === null) {
-			$requestUrl = isset($_SERVER['REQUEST_URI']) ? $_SERVER['REQUEST_URI'] : '/';
-		}
-
-		// strip base path from request url
-		$requestUrl = substr($requestUrl, strlen($this->basePath));
-
-		// Strip query string (?a=b) from Request Url
-		if (($strpos = strpos($requestUrl, '?')) !== false) {
-			$requestUrl = substr($requestUrl, 0, $strpos);
-		}
+		$requestUrl = $this->getRequestUrl($requestUrl);
 
 		// set Request Method if it isn't passed as a parameter
-		if($requestMethod === null) {
+		if(is_null($requestMethod)) {
 			$requestMethod = isset($_SERVER['REQUEST_METHOD']) ? $_SERVER['REQUEST_METHOD'] : 'GET';
 		}
 
@@ -174,22 +166,12 @@ class AltoRouter {
 		// http://www.mail-archive.com/internals@lists.php.net/msg33119.html
 		$_REQUEST = array_merge($_GET, $_POST);
 
-		foreach($this->routes as $handler) {
+		foreach($this->routes as $handler)
+		{
 			list($method, $_route, $target, $name) = $handler;
 
-			$methods = explode('|', $method);
-			$method_match = false;
-
-			// Check if request method matches. If not, abandon early. (CHEAP)
-			foreach($methods as $method) {
-				if (strcasecmp($requestMethod, $method) === 0) {
-					$method_match = true;
-					break;
-				}
-			}
-
 			// Method did not match, continue to next route.
-			if(!$method_match) continue;
+			if(!$this->methodMatch($method, $requestMethod)) continue;
 
 			// Check for a wildcard (matches all)
 			if ($_route === '*') {
@@ -227,7 +209,7 @@ class AltoRouter {
 				$match = preg_match($regex, $requestUrl, $params);
 			}
 
-			if(($match == true || $match > 0)) {
+			if(($match === true || $match > 0)) {
 
 				if($params) {
 					foreach($params as $key => $value) {
@@ -238,7 +220,7 @@ class AltoRouter {
 				return array(
 					'target' => $target,
 					'params' => $params,
-					'name' => $name
+					'name'   => $name
 				);
 			}
 		}
@@ -276,5 +258,33 @@ class AltoRouter {
 
 		}
 		return "`^$route$`u";
+	}
+
+	private function getRequestUrl( $requestUrl ) {
+		// set Request Url if it isn't passed as parameter
+		if($requestUrl === null) {
+			$requestUrl = isset($_SERVER['REQUEST_URI']) ? $_SERVER['REQUEST_URI'] : '/';
+		}
+
+		// strip base path from request url
+		$requestUrl = substr($requestUrl, strlen($this->basePath));
+
+		// Strip query string (?a=b) from Request Url
+		if (($strpos = strpos($requestUrl, '?')) !== false) {
+			$requestUrl = substr($requestUrl, 0, $strpos);
+		}
+
+		return $requestUrl;
+	}
+
+	private function methodMatch( $method, $requestMethod ) {
+		$methods = explode('|', $method);
+		// Check if request method matches. If not, abandon early. (CHEAP)
+		foreach($methods as $method) {
+			if (strcasecmp($requestMethod, $method) === 0) {
+				return true;
+			}
+		}
+		return false;
 	}
 }

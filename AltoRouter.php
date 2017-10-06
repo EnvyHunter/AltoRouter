@@ -5,9 +5,6 @@ class AltoRouter
 	protected $routes = array();
 	protected $namedRoutes = array();
 	protected $basePath = '';
-	protected $all = array(
-		'get', 'post'
-	);
 	protected $matchTypes = array(
 		'i'  => '[0-9]++',
 		'a'  => '[0-9A-Za-z]++',
@@ -16,6 +13,10 @@ class AltoRouter
 		'**' => '.++',
 		''   => '[^/\.]++'
 	);
+	protected $all = array(
+		'get', 'post'
+	);
+	private $server;
 
 	/**
 	 * Create router in one call from config.
@@ -24,11 +25,14 @@ class AltoRouter
 	 * @param string $basePath
 	 * @param array $matchTypes
 	 */
-	public function __construct($routes = array(), $basePath = '', $matchTypes = array())
+	public function __construct($routes = array(), $basePath = '', $matchTypes = array(), $server = null)
 	{
 		$this->addRoutes($routes);
 		$this->setBasePath($basePath);
 		$this->addMatchTypes($matchTypes);
+		if(!$server) {
+			$this->server = $_SERVER;
+		}
 	}
 
 	/**
@@ -57,8 +61,10 @@ class AltoRouter
 		if (!is_array($routes) && !$routes instanceof Traversable) {
 			throw new Exception('Routes should be an array or an instance of Traversable');
 		}
-		foreach ($routes as $route) {
-			call_user_func_array(array($this, 'map'), $route);
+		if(!empty($routes)) {
+			foreach ($routes as $route) {
+				call_user_func_array(array($this, 'map'), $route);
+			}
 		}
 	}
 
@@ -159,36 +165,20 @@ class AltoRouter
 
 		// set Request Method if it isn't passed as a parameter
 		if (is_null($requestMethod)) {
-			$requestMethod = isset($_SERVER['REQUEST_METHOD']) ? $_SERVER['REQUEST_METHOD'] : 'GET';
+			$requestMethod = $this->server['REQUEST_METHOD'];
 		}
 
-		// Force request_order to be GP
-		// http://www.mail-archive.com/internals@lists.php.net/msg33119.html
-		$_REQUEST = array_merge($_GET, $_POST);
-
 		foreach ($this->routes as $handler) {
-			list($method, $routeString, $target, $name) = $handler;
-
 			// Method did not match, continue to next route.
-			if (!$match = $this->methodMatch($method, $requestMethod, $routeString, $requestUrl)) {
+			if (!$this->methodMatch($handler[0], $requestMethod, $handler[1], $requestUrl)) {
 				continue;
 			}
 
-			if (($match === true || $match > 0)) {
-				if ($keys = array_keys($params)) {
-					foreach ($keys as $key) {
-						if (is_numeric($key)) {
-							unset($params[$key]);
-						}
-					}
-				}
-
-				return array(
-					'target' => $target,
-					'params' => $params,
-					'name'   => $name
-				);
-			}
+			return array(
+				'target' => $handler[2],
+				'params' => array_filter($params, function ($k) { return !is_numeric($k); }, ARRAY_FILTER_USE_KEY),
+				'name'   => $handler[3]
+			);
 		}
 
 		return false;
@@ -238,10 +228,8 @@ class AltoRouter
 	{
 		// set Request Url if it isn't passed as parameter
 		if (is_null($requestUrl)) {
-			$requestUrl = isset($_SERVER['REQUEST_URI']) ? $_SERVER['REQUEST_URI'] : '/';
+			$requestUrl = parse_url($this->server['REQUEST_URI'], PHP_URL_PATH);
 		}
-
-		$requestUrl = parse_url($requestUrl, PHP_URL_PATH);
 
 		return str_replace($this->basePath, '', $requestUrl);
 	}
@@ -259,20 +247,21 @@ class AltoRouter
 		$method = strtolower($method);
 		$requestMethod = strtolower($requestMethod);
 		$methods = explode('|', $method);
-		$methodMatch = in_array($requestMethod, $methods);
 
-		if(!$methodMatch) return false;
+		if(in_array($requestMethod, $methods))
+		{
+			if($routeString == '*') return true;
 
-		// Check for a wildcard (matches all)
-		if ($routeString === '*') {
-			return true;
-		} elseif (isset($routeString[0]) && $routeString[0] === '@') {
-			$pattern = '`' . substr($routeString, 1) . '`u';
-			return preg_match($pattern, $requestUrl, $params);
+			if(is_array($routeString) && !empty($routeString)) {
+				if($routeString[0] == '@') {
+					return preg_match('`' . substr($routeString, 1) . '`u', $requestUrl, $params);
+				}
+				$regex = $this->compileRoute($routeString, $requestUrl);
+				return preg_match($regex, $requestUrl, $params);
+			}
 		}
 
-		$regex = $this->compileRoute($routeString, $requestUrl);
-		return preg_match($regex, $requestUrl, $params);
+		return false;
 	}
 
 	/**
@@ -291,7 +280,8 @@ class AltoRouter
 		while (true) {
 			if (!isset($routeString[$iPointer])) {
 				break;
-			} elseif (false === $regex) {
+			}
+			if ($regex === false) {
 				if(!$this->getRouteRegexCheck($nPointer, $jPointer, $iPointer, $routeString, $requestUrl)) {
 					continue;
 				}

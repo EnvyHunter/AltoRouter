@@ -283,30 +283,38 @@ class AltoRouter
 	 */
 	private function getRoute($routeString, $requestUrl)
 	{
-		$i = $j = 0;
-		$n = isset($routeString[0]) ? $routeString[0] : null;
+		$iPointer = $jPointer = 0;
+		$nPointer = isset($routeString[0]) ? $routeString[0] : null;
 		$regex = $route = false;
 
 		// Find the longest non-regex substring and match it against the URI
 		while (true) {
-			if (!isset($routeString[$i])) {
+			if (!isset($routeString[$iPointer])) {
 				break;
 			} elseif (false === $regex) {
-				$c = $n;
-				$regex = in_array($c, array('[', '(', '.'));
-				if (!$regex && isset($routeString[$i+1])) {
-					$n = $routeString[$i + 1];
-					$regex = in_array($n, array('?', '+', '*', '{'));
-				}
-				if (!$regex && $c !== '/' && (!isset($requestUrl[$j]) || $c !== $requestUrl[$j])) {
+				if(!$this->getRouteRegexCheck($nPointer, $jPointer, $iPointer, $routeString, $requestUrl)) {
 					continue;
 				}
-				$j++;
+				$jPointer++;
 			}
-			$route .= $routeString[$i++];
+			$route .= $routeString[$iPointer++];
 		}
 
 		return $route;
+	}
+
+	private function getRouteRegexCheck($nPointer, $jPointer, $iPointer, $routeString, $requestUrl)
+	{
+		$cPointer = $nPointer;
+		$regex = in_array($cPointer, array('[', '(', '.'));
+		if (!$regex && isset($routeString[$iPointer+1])) {
+			$nPointer = $routeString[$iPointer + 1];
+			$regex = in_array($nPointer, array('?', '+', '*', '{'));
+		}
+		if (!$regex && $cPointer !== '/' && (!isset($requestUrl[$jPointer]) || $cPointer !== $requestUrl[$jPointer])) {
+			return false;
+		}
+		return true;
 	}
 
 	public function __call($method, $arguments)

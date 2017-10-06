@@ -170,19 +170,8 @@ class AltoRouter
 			list($method, $routeString, $target, $name) = $handler;
 
 			// Method did not match, continue to next route.
-			if (!$this->methodMatch($method, $requestMethod)) {
+			if (!$match = $this->methodMatch($method, $requestMethod, $routeString, $requestUrl)) {
 				continue;
-			}
-
-			// Check for a wildcard (matches all)
-			if ($routeString === '*') {
-				$match = true;
-			} elseif (isset($routeString[0]) && $routeString[0] === '@') {
-				$pattern = '`' . substr($routeString, 1) . '`u';
-				$match   = preg_match($pattern, $requestUrl, $params);
-			} else {
-				$regex = $this->compileRoute($routeString, $requestUrl);
-				$match = preg_match($regex, $requestUrl, $params);
 			}
 
 			if (($match === true || $match > 0)) {
@@ -201,6 +190,7 @@ class AltoRouter
 				);
 			}
 		}
+
 		return false;
 	}
 
@@ -259,15 +249,30 @@ class AltoRouter
 	/**
 	 * @param $method
 	 * @param $requestMethod
+	 * @param $routeString
+	 * @param $requestUrl
 	 *
 	 * @return mixed
 	 */
-	private function methodMatch($method, $requestMethod)
+	private function methodMatch($method, $requestMethod, $routeString, $requestUrl)
 	{
 		$method = strtolower($method);
 		$requestMethod = strtolower($requestMethod);
 		$methods = explode('|', $method);
-		return in_array($requestMethod, $methods);
+		$methodMatch = in_array($requestMethod, $methods);
+
+		if(!$methodMatch) return false;
+
+		// Check for a wildcard (matches all)
+		if ($routeString === '*') {
+			return true;
+		} elseif (isset($routeString[0]) && $routeString[0] === '@') {
+			$pattern = '`' . substr($routeString, 1) . '`u';
+			return preg_match($pattern, $requestUrl, $params);
+		}
+
+		$regex = $this->compileRoute($routeString, $requestUrl);
+		return preg_match($regex, $requestUrl, $params);
 	}
 
 	/**

@@ -14,7 +14,12 @@ $router->map( 'GET|POST', '/users/[i:id]/', function( $id ) {
   $user = .....
   require __DIR__ . '/views/user/details.php';
 });
-```
+
+// map users details page (get, post, delete, put, patch, update)
+$router->get('/users/[i:id]/', function( $id ) {
+  $user = .....
+  require __DIR__ . '/views/user/details.php';
+});
 
 ## Features
 

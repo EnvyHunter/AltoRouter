@@ -1,4 +1,7 @@
 <?php
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
 
 require '../../AltoRouter.php';
 
@@ -6,8 +9,8 @@ $router = new AltoRouter();
 $router->setBasePath('/AltoRouter/examples/basic');
 $router->map('GET|POST','/', 'home#index', 'home');
 $router->map('GET','/users/', array('c' => 'UserController', 'a' => 'ListAction'));
-$router->map('GET','/users/[i:id]', 'users#show', 'users_show');
-$router->map('POST','/users/[i:id]/[delete|update:action]', 'usersController#doAction', 'users_do');
+$router->get('/users/[i:id]', 'users#show', 'users_show');
+$router->post('/users/[i:id]/[delete|update:action]', 'usersController#doAction', 'users_do');
 
 // match current request
 $match = $router->match();

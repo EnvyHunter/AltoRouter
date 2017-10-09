@@ -1,8 +1,19 @@
 <?php
+namespace HakimCh\Http\Tests;
 
-require dirname(__DIR__) . '/AltoRouter.php';
+use Exception;
+use HakimCh\Http\Router;
+use HakimCh\Http\RouterParser;
+use Iterator;
+use PHPUnit_Framework_TestCase;
+use stdClass;
 
-class AltoRouterDebug extends AltoRouter{
+require dirname(__DIR__) . '/RouterException.php';
+require dirname(__DIR__) . '/RouterParserInterface.php';
+require dirname(__DIR__) . '/RouterParser.php';
+require dirname(__DIR__) . '/Router.php';
+
+class RouterDebug extends Router{
 
 	public function getNamedRoutes(){
 		return $this->namedRoutes;
@@ -12,6 +23,9 @@ class AltoRouterDebug extends AltoRouter{
 		return $this->basePath;
 	}
 
+	public function setServer($server) {
+	    $this->server = $server;
+    }
 }
 
 class SimpleTraversable implements Iterator{
@@ -47,7 +61,7 @@ class SimpleTraversable implements Iterator{
 class AltoRouterTest extends PHPUnit_Framework_TestCase
 {
 	/**
-	 * @var AltoRouter
+	 * @var RouterDebug
 	 */
 	protected $router;
 
@@ -57,19 +71,12 @@ class AltoRouterTest extends PHPUnit_Framework_TestCase
 	 */
 	protected function setUp()
 	{
-		$this->router = new AltoRouterDebug;
+	    $parser = new RouterParser();
+		$this->router = new RouterDebug($parser, [], '', $_SERVER);
 	}
 
 	/**
-	 * Tears down the fixture, for example, closes a network connection.
-	 * This method is called after a test is executed.
-	 */
-	protected function tearDown()
-	{
-	}
-
-	/**
-	 * @covers AltoRouter::getRoutes
+	 * @covers Router::getRoutes
 	 */
 	public function testGetRoutes()
 	{
@@ -83,7 +90,7 @@ class AltoRouterTest extends PHPUnit_Framework_TestCase
 	}
 
 	/**
-	 * @covers AltoRouter::setRoutes
+	 * @covers Router::setRoutes
 	 */
 	public function testAddRoutes()
 	{
@@ -103,7 +110,7 @@ class AltoRouterTest extends PHPUnit_Framework_TestCase
 	}
 
 	/**
-	 * @covers AltoRouter::setRoutes
+	 * @covers Router::setRoutes
 	 */
 	public function testAddRoutesAcceptsTraverable()
 	{
@@ -123,7 +130,7 @@ class AltoRouterTest extends PHPUnit_Framework_TestCase
 	}
 
 	/**
-	 * @covers AltoRouter::setRoutes
+	 * @covers Router::setRoutes
 	 * @expectedException Exception
 	 */
 	public function testAddRoutesThrowsExceptionOnInvalidArgument()
@@ -136,15 +143,15 @@ class AltoRouterTest extends PHPUnit_Framework_TestCase
 	 */
 	public function testSetBasePath()
 	{
-		$basePath = $this->router->setBasePath('/some/path');
+		$this->router->setBasePath('/some/path');
 		$this->assertEquals('/some/path', $this->router->getBasePath());
 		
-		$basePath = $this->router->setBasePath('/some/path');
+		$this->router->setBasePath('/some/path');
 		$this->assertEquals('/some/path', $this->router->getBasePath());
 	}
 
 	/**
-	 * @covers AltoRouter::map
+	 * @covers Router::map
 	 */
 	public function testMap()
 	{
@@ -160,7 +167,7 @@ class AltoRouterTest extends PHPUnit_Framework_TestCase
 	}
 
 	/**
-	 * @covers AltoRouter::map
+	 * @covers Router::map
 	 */
 	public function testMapWithName()
 	{
@@ -187,7 +194,7 @@ class AltoRouterTest extends PHPUnit_Framework_TestCase
 
 
 	/**
-	 * @covers AltoRouter::generate
+	 * @covers Router::generate
 	 */
 	public function testGenerate()
 	{
@@ -239,14 +246,15 @@ class AltoRouterTest extends PHPUnit_Framework_TestCase
 		try{
 			$this->router->generate('nonexisting_route');
 			$this->fail('Should trigger an exception on nonexisting named route');
-		}catch(Exception $e){
+		}
+		catch(Exception $e){
 			$this->assertEquals("Route 'nonexisting_route' does not exist.", $e->getMessage());
 		}
 	}
 	
 	/**
-	 * @covers AltoRouter::match
-	 * @covers AltoRouter::compileRoute
+	 * @covers Router::match
+	 * @covers Router::compileRoute
 	 */
 	public function testMatch()
 	{
@@ -298,6 +306,8 @@ class AltoRouterTest extends PHPUnit_Framework_TestCase
 		
 		$_SERVER['REQUEST_URI'] = '/foo/test/do';
 		$_SERVER['REQUEST_METHOD'] = 'GET';
+
+		$this->router->setServer($_SERVER);
 		
 		$this->assertEquals(array(
 			'target' => 'foo_action',
@@ -380,11 +390,11 @@ class AltoRouterTest extends PHPUnit_Framework_TestCase
 	}
 
 	/**
-	 * @covers AltoRouter::setMatchTypes
+	 * @covers Router::setMatchTypes
 	 */
 	public function testMatchWithCustomNamedRegex()
 	{
-		$this->router->setMatchTypes(array('cId' => '[a-zA-Z]{2}[0-9](?:_[0-9]++)?'));
+		$this->router->getParser()->setMatchTypes(array('cId' => '[a-zA-Z]{2}[0-9](?:_[0-9]++)?'));
 		$this->router->map('GET', '/bar/[cId:customId]', 'bar_action', 'bar_route');
 		
 		$this->assertEquals(array(
@@ -417,12 +427,12 @@ class AltoRouterTest extends PHPUnit_Framework_TestCase
 		$pattern .= '\x{0750}-\x{077F}';
 		$pattern .= ']+';
 		
-		$this->router->setMatchTypes(array('nonArabic' => $pattern));
+		$this->router->getParser()->setMatchTypes(array('nonArabic' => $pattern));
 		$this->router->map('GET', '/bar/[nonArabic:string]', 'non_arabic_action', 'non_arabic_route');
-		
+
 		$this->assertEquals(array(
 			'target' => 'non_arabic_action',
-			'name' => 'non_arabic_route',
+			'name'   => 'non_arabic_route',
 			'params' => array(
 				'string' => 'some-path'
 			)

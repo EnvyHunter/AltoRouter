@@ -1,37 +1,47 @@
 <?php
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
 
-require 'Router.php';
-require 'RouterParser.php';
+require '../../Router.php';
+require '../../RouterParserInterface.php';
+require '../../RouterException.php';
+require '../../RouterParser.php';
 
 $parser = new \HakimCh\Http\RouterParser();
 $router = new \HakimCh\Http\Router($parser);
-$router->setBasePath('/AltoRouter/examples/basic');
+$router->setBasePath('/examples/basic');
 $router->map('GET|POST','/', 'home#index', 'home');
 $router->map('GET','/users/', array('c' => 'UserController', 'a' => 'ListAction'));
 $router->map('GET','/users/[i:id]', 'users#show', 'users_show');
 $router->map('POST','/users/[i:id]/[delete|update:action]', 'usersController#doAction', 'users_do');
+$router->map('GET', '/foo/[:controller]/[:action]', 'foo_action', 'foo_route');
 
 // match current request
 $match = $router->match();
+
+$router->generate('nonexisting_route');
 ?>
 <h1>AltoRouter</h1>
 
 <h3>Current request: </h3>
 <pre>
      <?php
-     foreach($match as $key => $value) {
-         echo '<p>' . $key . ': ';
-         if(is_array($value)) {
-             echo '<ul>';
-             foreach($value as $k => $v) {
-                 echo '<li>'.$k.': '.$v.'</li>';
+     if($match) {
+         foreach($match as $key => $value) {
+             echo '<p>' . $key . ': ';
+             if(is_array($value)) {
+                 echo '<ul>';
+                 foreach($value as $k => $v) {
+                     echo '<li>'.$k.': '.$v.'</li>';
+                 }
+                 echo '</ul>';
              }
-             echo '</ul>';
+             else {
+                 echo $value;
+             }
+             echo '</p>';
          }
-         else {
-             echo $value;
-         }
-         echo '</p>';
      }
      ?>
  </pre>

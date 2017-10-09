@@ -10,7 +10,7 @@ class Router
 	protected $namedRoutes = [];
 	protected $basePath = '';
 	protected $all = ['get', 'post'];
-	private $server;
+    protected $server;
     /**
      * @var RouterParser
      */
@@ -63,7 +63,7 @@ class Router
 	 */
 	public function generate($routeName, array $params = [])
 	{
-        $this->handleException($routeName, "Can not redeclare route '%s'", false);
+        $this->handleException($routeName, "Route '%s' does not exist.", false);
 
 		$route = $this->namedRoutes[$routeName];
 
@@ -134,7 +134,7 @@ class Router
      *      array($method, $route, $target, $name)
      *   );
      *
-     * @param array $routes
+     * @param array|Traversable $routes
      * @return void
      * @author Koen Punt
      */
@@ -157,16 +157,6 @@ class Router
     public function setBasePath($basePath)
     {
         $this->basePath = $basePath;
-    }
-
-    /**
-     * Add named match types. It uses array_merge so keys can be overwritten.
-     *
-     * @param array $matchTypes The key is the name and the value is the regex.
-     */
-    public function setMatchTypes($matchTypes)
-    {
-        $this->matchTypes = array_merge($this->matchTypes, $matchTypes);
     }
 
     /**
@@ -194,6 +184,11 @@ class Router
             $requestUrl = parse_url($this->server['REQUEST_URI'], PHP_URL_PATH);
         }
 
-        return str_replace($this->basePath, '', $requestUrl);
+        return str_replace($this->basePath, '', strtok($requestUrl, '?'));
+    }
+
+    public function getParser()
+    {
+        return $this->parser;
     }
 }

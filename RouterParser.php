@@ -34,12 +34,15 @@ class RouterParser implements RouterParserInterface
     }
 
     /**
-     * @param $basePath
-     * @param $route
-     * @param $params
-     * @return mixed|string
+     * Get the url from a route name
+     *
+     * @param string $basePath
+     * @param string $route
+     * @param array $params
+     *
+     * @return string
      */
-    public function generate($basePath, $route, $params)
+    public function generate($basePath, $route, array $params)
     {
         $url = $basePath . $route;
 
@@ -83,7 +86,8 @@ class RouterParser implements RouterParserInterface
                 return true;
             }
             elseif(isset($routeString[0]) && $routeString[0] == '@') {
-                return preg_match('`' . substr($routeString[0], 1) . '`u', $requestUrl, $this->params);
+                $match = preg_match('`' . substr($routeString, 1) . '`u', $requestUrl, $this->params);
+                return $match;
             }
             elseif (($position = strpos($routeString, '[')) === false) {
                 return strcmp($requestUrl, $routeString) === 0;
@@ -187,5 +191,10 @@ class RouterParser implements RouterParserInterface
     public function getParams()
     {
         return $this->params;
+    }
+
+    public function getMatchTypes()
+    {
+        return $this->matchTypes;
     }
 }

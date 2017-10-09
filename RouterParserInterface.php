@@ -14,12 +14,12 @@ interface RouterParserInterface
      * Get the url from a route name
      *
      * @param string $basePath
-     * @param array $route
+     * @param string $route
      * @param array $params
      *
      * @return string
      */
-    public function generate($basePath, array $route, array $params);
+    public function generate($basePath, $route, array $params);
 
     /**
      * Check if the request method match the route methods

@@ -1,16 +1,25 @@
 language: php
+sudo: false
+
 php:
-  - 5.3
-  - 5.4
-  - 5.5
-  - 5.6
-  - hhvm
+    - 5.6
+    - 7.0
+    - 7.1
+    - hhvm
+
+cache:
+  directories:
+    - $HOME/.composer/cache
+
+before_install:
+    - composer self-update
+    - composer validate
+
 install:
-  - composer install --dev
+    - composer install --prefer-source
+
 script:
-  - ./vendor/bin/phpunit
+    - ./vendor/bin/phpunit --coverage-clover=coverage.clover
+
 after_script:
-  - ./vendor/bin/test-reporter
-env:
-  global:
-    secure: XnXSc7nxJMIrm/EJ1KuwlN4f+sj2R/sR0IFHdOdbOfMKyZ/u6WEgZ3vNrdeAsisiC/QUJJ00DGku1pAl3t3Hzvam0N/SiHtXjB1ZLVbX00S1PEZ6Z+h9zoaUBXWoN6+0OdKN0Xjmj2lwvTpvUxUZXNabilOw0F9WS/+JasofqBQ=
+    - wget https://scrutinizer-ci.com/ocular.phar && php ocular.phar code-coverage:upload --format=php-clover coverage.clover

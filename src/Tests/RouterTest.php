@@ -8,11 +8,6 @@ use Iterator;
 use PHPUnit_Framework_TestCase;
 use stdClass;
 
-require dirname(__DIR__) . '/RouterException.php';
-require dirname(__DIR__) . '/RouterParserInterface.php';
-require dirname(__DIR__) . '/RouterParser.php';
-require dirname(__DIR__) . '/Router.php';
-
 class RouterDebug extends Router
 {
     public function getNamedRoutes()

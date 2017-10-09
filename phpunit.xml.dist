@@ -1,20 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
 <phpunit
-	colors="true"
-	verbose="true">
-	<testsuites>
-		<testsuite name="altorouter">
-			<directory>./tests/</directory>
-		</testsuite>
-	</testsuites>
-	<filter>
-		<blacklist>
-			<directory>./vendor/</directory>
-		</blacklist>
-	</filter>
-	<php>
-		<ini name="display_errors" value="true"/>
-	</php>
-	<logging>
-		<log type="coverage-clover" target="build/logs/clover.xml"/>
-	</logging>
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="vendor/phpunit/phpunit/phpunit.xsd"
+        backupGlobals="false"
+        backupStaticAttributes="false"
+        beStrictAboutOutputDuringTests="true"
+        beStrictAboutTestsThatDoNotTestAnything="true"
+        beStrictAboutTodoAnnotatedTests="true"
+        colors="true"
+        convertErrorsToExceptions="true"
+        convertNoticesToExceptions="true"
+        convertWarningsToExceptions="true"
+        processIsolation="false"
+        stopOnFailure="false"
+        bootstrap="vendor/autoload.php">
+    <testsuites>
+        <testsuite name="Router test suite">
+            <directory>./src/Tests/</directory>
+        </testsuite>
+    </testsuites>
+    <filter>
+        <whitelist addUncoveredFilesFromWhitelist="true" processUncoveredFilesFromWhitelist="true">
+            <directory>./src</directory>
+            <exclude>
+                <directory>./src/Tests</directory>
+                <directory>./vendor</directory>
+            </exclude>
+        </whitelist>
+    </filter>
 </phpunit>

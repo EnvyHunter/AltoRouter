@@ -1,7 +1,7 @@
 <?php
 namespace HakimCh\Http;
 
-use HakimCh\Http\Exception\RouterException;
+use HakimCh\Http\RouterException;
 use Traversable;
 
 class Router

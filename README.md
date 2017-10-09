@@ -1,8 +1,9 @@
-# AltoRouter [![Build Status](https://api.travis-ci.org/dannyvankooten/AltoRouter.png)](http://travis-ci.org/dannyvankooten/AltoRouter) [![Latest Stable Version](https://poser.pugx.org/altorouter/altorouter/v/stable.svg)](https://packagist.org/packages/altorouter/altorouter) [![License](https://poser.pugx.org/altorouter/altorouter/license.svg)](https://packagist.org/packages/altorouter/altorouter) [![Code Climate](https://codeclimate.com/github/dannyvankooten/AltoRouter/badges/gpa.svg)](https://codeclimate.com/github/dannyvankooten/AltoRouter) [![Test Coverage](https://codeclimate.com/github/dannyvankooten/AltoRouter/badges/coverage.svg)](https://codeclimate.com/github/dannyvankooten/AltoRouter)
-AltoRouter is a small but powerful routing class for PHP 5.3+, heavily inspired by [klein.php](https://github.com/chriso/klein.php/).
+# AltoRouter [![Build Status](https://api.travis-ci.org/dannyvankooten/AltoRouter.png)](http://travis-ci.org/HakimCh/Router) [![Latest Stable Version](https://poser.pugx.org/hakimch/router/v/stable.svg)](https://packagist.org/packages/hakimch/router) [![License](https://poser.pugx.org/hakimch/router/license.svg)](https://packagist.org/packages/hakimch/router) [![Code Climate](https://codeclimate.com/github/HakimCh/Router/badges/gpa.svg)](https://codeclimate.com/github/HakimCh/Router) [![Test Coverage](https://codeclimate.com/github/HakimCh/Router/badges/coverage.svg)](https://codeclimate.com/github/HakimCh/Router)
+Router is a small but powerful routing class for PHP 5.6+, forked from [AltoRouter.php](https://github.com/dannyvankooten/AltoRouter/).
 
 ```php
-$router = new AltoRouter();
+$parser = new \HakimCh\Http\RouterParser();
+$router = new \HakimCh\Http\Router($parser, [], '', $_SERVER);
 
 // map homepage
 $router->map( 'GET', '/', function() {
@@ -31,7 +32,7 @@ $router->get('/users/[i:id]/', function( $id ) {
 
 ## Getting started
 
-You need PHP >= 5.3 to use AltoRouter.
+You need PHP >= 5.6 to use Router.
 
 - [Install AltoRouter](http://altorouter.com/usage/install.html)
 - [Rewrite all requests to AltoRouter](http://altorouter.com/usage/rewrite-requests.html)
@@ -44,12 +45,13 @@ You need PHP >= 5.3 to use AltoRouter.
 - [Koen Punt](https://github.com/koenpunt)
 - [John Long](https://github.com/adduc)
 - [Niahoo Osef](https://github.com/niahoo)
+- [Hakim Ch](https://github.com/HakimCh)
 
 ## License
 
 (MIT License)
 
-Copyright (c) 2012-2015 Danny van Kooten <hi@dannyvankooten.com>
+Copyright (c) 2017 Hakim Ch <ab.chmimo@gmail.com>
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
 

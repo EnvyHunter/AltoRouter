@@ -3,13 +3,11 @@ ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
-require '../../Router.php';
-require '../../RouterParserInterface.php';
-require '../../RouterException.php';
-require '../../RouterParser.php';
+require '../../vendor/autoload.php';
 
 $parser = new \HakimCh\Http\RouterParser();
 $router = new \HakimCh\Http\Router($parser, [], '', $_SERVER);
+
 $router->setBasePath('/examples/basic');
 $router->map('GET|POST', '/', 'home#index', 'home');
 $router->map('GET', '/users/', array('c' => 'UserController', 'a' => 'ListAction'));

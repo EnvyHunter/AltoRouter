@@ -1,5 +1,5 @@
 <?php
-namespace HakimCh\Http\Exception;
+namespace HakimCh\Http;
 
 use Exception;
 

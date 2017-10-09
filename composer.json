@@ -1,8 +1,8 @@
 {
-   "name": "altorouter/altorouter",
+   "name": "hakimch/router",
    "description": "A lightning fast router for PHP",
    "keywords": ["router", "routing", "lightweight"],
-   "homepage": "https://github.com/dannyvankooten/AltoRouter",
+   "homepage": "https://github.com/HakimCh/AltoRouter",
    "license": "MIT",
    "authors": [
       {
@@ -17,6 +17,10 @@
       {
          "name": "niahoo",
          "homepage": "https://github.com/niahoo"
+      },
+      {
+         "name": "Hakim Ch",
+         "homepage": "https://github.com/HakimCh"
       }
    ],
    "require": {
@@ -27,7 +31,7 @@
       "codeclimate/php-test-reporter": "dev-master"
    },
    "autoload": {
-      "classmap": ["AltoRouter.php"]
+      "classmap": ["Router.php", "RouterParser.php"]
    },
    "scripts": {
      "test": "vendor/bin/phpunit"

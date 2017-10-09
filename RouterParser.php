@@ -53,9 +53,9 @@ class RouterParser implements RouterParserInterface
                 $block = $pre ? substr($match[0], 1) : $match[0];
 
                 if (isset($params[$param])) {
-                    return str_replace($block, $params[$param], $url);
+                    $url = str_replace($block, $params[$param], $url);
                 } elseif ($match[4]) {
-                    return str_replace($pre . $block, '', $url);
+                    $url = str_replace($pre . $block, '', $url);
                 }
             }
         }

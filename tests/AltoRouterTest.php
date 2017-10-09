@@ -83,7 +83,7 @@ class AltoRouterTest extends PHPUnit_Framework_TestCase
 	}
 
 	/**
-	 * @covers AltoRouter::addRoutes
+	 * @covers AltoRouter::setRoutes
 	 */
 	public function testAddRoutes()
 	{
@@ -91,7 +91,7 @@ class AltoRouterTest extends PHPUnit_Framework_TestCase
 		$route = '/[:controller]/[:action]';
 		$target = function(){};
 		
-		$this->router->addRoutes(array(
+		$this->router->setRoutes(array(
 			array($method, $route, $target),
 			array($method, $route, $target, 'second_route')
 		));
@@ -103,12 +103,12 @@ class AltoRouterTest extends PHPUnit_Framework_TestCase
 	}
 
 	/**
-	 * @covers AltoRouter::addRoutes
+	 * @covers AltoRouter::setRoutes
 	 */
 	public function testAddRoutesAcceptsTraverable()
 	{
 		$traversable = new SimpleTraversable();
-		$this->router->addRoutes($traversable);
+		$this->router->setRoutes($traversable);
 		
 		$traversable->rewind();
 		
@@ -123,12 +123,12 @@ class AltoRouterTest extends PHPUnit_Framework_TestCase
 	}
 
 	/**
-	 * @covers AltoRouter::addRoutes
+	 * @covers AltoRouter::setRoutes
 	 * @expectedException Exception
 	 */
 	public function testAddRoutesThrowsExceptionOnInvalidArgument()
 	{
-		$this->router->addRoutes(new stdClass);
+		$this->router->setRoutes(new stdClass);
 	}
 
 	/**
@@ -380,11 +380,11 @@ class AltoRouterTest extends PHPUnit_Framework_TestCase
 	}
 
 	/**
-	 * @covers AltoRouter::addMatchTypes
+	 * @covers AltoRouter::setMatchTypes
 	 */
 	public function testMatchWithCustomNamedRegex()
 	{
-		$this->router->addMatchTypes(array('cId' => '[a-zA-Z]{2}[0-9](?:_[0-9]++)?'));
+		$this->router->setMatchTypes(array('cId' => '[a-zA-Z]{2}[0-9](?:_[0-9]++)?'));
 		$this->router->map('GET', '/bar/[cId:customId]', 'bar_action', 'bar_route');
 		
 		$this->assertEquals(array(
@@ -417,7 +417,7 @@ class AltoRouterTest extends PHPUnit_Framework_TestCase
 		$pattern .= '\x{0750}-\x{077F}';
 		$pattern .= ']+';
 		
-		$this->router->addMatchTypes(array('nonArabic' => $pattern));
+		$this->router->setMatchTypes(array('nonArabic' => $pattern));
 		$this->router->map('GET', '/bar/[nonArabic:string]', 'non_arabic_action', 'non_arabic_route');
 		
 		$this->assertEquals(array(

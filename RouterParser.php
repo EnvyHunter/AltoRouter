@@ -162,7 +162,7 @@ class RouterParser implements RouterParserInterface
                 break;
             }
             if ($regex === false) {
-                if (!$this->getRouteRegexCheck($nPointer, $jPointer, $iPointer, $routeString, $requestUrl)) {
+                if (!$this->isValidRouteRegex($nPointer, $jPointer, $iPointer, $routeString, $requestUrl)) {
                     continue;
                 }
                 $jPointer++;
@@ -182,7 +182,7 @@ class RouterParser implements RouterParserInterface
      *
      * @return bool
      */
-    private function getRouteRegexCheck($nPointer, $jPointer, $iPointer, $routeString, $requestUrl)
+    private function isValidRouteRegex($nPointer, $jPointer, $iPointer, $routeString, $requestUrl)
     {
         $cPointer = $nPointer;
         $regex = in_array($cPointer, array('[', '(', '.'));

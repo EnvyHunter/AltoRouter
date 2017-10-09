@@ -9,7 +9,7 @@ require '../../RouterException.php';
 require '../../RouterParser.php';
 
 $parser = new \HakimCh\Http\RouterParser();
-$router = new \HakimCh\Http\Router($parser);
+$router = new \HakimCh\Http\Router($parser, '', [], $_SERVER);
 $router->setBasePath('/examples/basic');
 $router->map('GET|POST','/', 'home#index', 'home');
 $router->map('GET','/users/', array('c' => 'UserController', 'a' => 'ListAction'));
@@ -19,8 +19,6 @@ $router->map('GET', '/foo/[:controller]/[:action]', 'foo_action', 'foo_route');
 
 // match current request
 $match = $router->match();
-
-$router->generate('nonexisting_route');
 ?>
 <h1>AltoRouter</h1>
 

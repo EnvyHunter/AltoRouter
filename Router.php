@@ -22,16 +22,14 @@ class Router
      * @param RouterParser $parser
      * @param array $routes
      * @param string $basePath
-     * @param null $server
+     * @param array|null $server
      */
 	public function __construct(RouterParser $parser, $routes = [], $basePath = '', $server = null)
 	{
 		$this->setRoutes($routes);
 		$this->setBasePath($basePath);
         $this->parser = $parser;
-		if(!$server) {
-			$this->server = $_SERVER;
-		}
+		$this->server = $server;
     }
 
 	/**
@@ -45,7 +43,7 @@ class Router
 	public function map($method, $route, $target, $routeName = null)
 	{
 		if (is_string($routeName)) {
-		    $this->handleException($routeName, "Can not redeclare route '%s'");
+		    $this->handleException($routeName, "Can not redeclare route '%s'", true);
 			$this->namedRoutes[$routeName] = $route;
 		}
 
@@ -58,7 +56,7 @@ class Router
 	 * Generate the URL for a named route. Replace regexes with supplied parameters
 	 *
 	 * @param string $routeName The name of the route.
-	 * @param array @params Associative array of parameters to replace placeholders with.
+	 * @param array $params Associative array of parameters to replace placeholders with.
 	 * @return string The URL of the route with named parameters in place.
 	 */
 	public function generate($routeName, array $params = [])
@@ -165,7 +163,7 @@ class Router
      * @param bool $cmpTo
      * @throws RouterException
      */
-    private function handleException($routeName, $message, $cmpTo = true)
+    private function handleException($routeName, $message, $cmpTo)
     {
         if (array_key_exists($routeName, $this->namedRoutes) === $cmpTo) {
             throw new RouterException(sprintf($message, $routeName));

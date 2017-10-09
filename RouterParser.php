@@ -70,7 +70,7 @@ class RouterParser implements RouterParserInterface
     /**
      * @param $method
      * @param $requestMethod
-     * @param string|array $routeString
+     * @param string $routeString
      * @param $requestUrl
      *
      * @return mixed
@@ -92,13 +92,12 @@ class RouterParser implements RouterParserInterface
             elseif (($position = strpos($routeString, '[')) === false) {
                 return strcmp($requestUrl, $routeString) === 0;
             }
-            else {
-                if (strncmp($requestUrl, $routeString, $position) !== 0) {
-                    return false;
-                }
-                $regex = $this->compileRoute($routeString, $requestUrl);
-                return preg_match($regex, $requestUrl, $this->params);
+
+            if (strncmp($requestUrl, $routeString, $position) !== 0) {
+                return false;
             }
+            $regex = $this->compileRoute($routeString, $requestUrl);
+            return preg_match($regex, $requestUrl, $this->params);
         }
 
         return false;

@@ -48,18 +48,14 @@ class RouterParser implements RouterParserInterface
 
         if (preg_match_all('`(/|\.|)\[([^:\]]*+)(?::([^:\]]*+))?\](\?|)`', $route, $matches, PREG_SET_ORDER)) {
             foreach ($matches as $match) {
-                $block  = $match[0];
-                $pre    = $match[1];
-                $param  = $match[3];
-
-                if ($pre) {
-                    $block = substr($block, 1);
-                }
+                $pre   = $match[1];
+                $param = $match[3];
+                $block = $pre ? substr($match[0], 1) : $match[0];
 
                 if (isset($params[$param])) {
-                    $url = str_replace($block, $params[$param], $url);
+                    return str_replace($block, $params[$param], $url);
                 } elseif ($match[4]) {
-                    $url = str_replace($pre . $block, '', $url);
+                    return str_replace($pre . $block, '', $url);
                 }
             }
         }
@@ -112,9 +108,8 @@ class RouterParser implements RouterParserInterface
         if (preg_match_all('`(/|\.|)\[([^:\]]*+)(?::([^:\]]*+))?\](\?|)`', $route, $matches, PREG_SET_ORDER)) {
             $matchTypes = $this->matchTypes;
             foreach ($matches as $match) {
-                list($block, $pre, $type, $param, $optional) = $match;
-                $pattern = $this->getRoutePattern($matchTypes, $pre, $type, $param, $optional);
-                $route = str_replace($block, $pattern, $route);
+                $pattern = $this->getRoutePattern($matchTypes, $match[1], $match[2], $match[3], $match[4]);
+                $route   = str_replace($match[0], $pattern, $route);
             }
         }
 
@@ -141,12 +136,12 @@ class RouterParser implements RouterParserInterface
 
         //Older versions of PCRE require the 'P' in (?P<named>)
         return '(?:'
-            . ($pre !== '' ? $pre : null)
+            . (!empty($pre) ? $pre : null)
             . '('
-            . ($param !== '' ? "?P<$param>" : null)
+            . (!empty($param) ? "?P<$param>" : null)
             . $type
             . '))'
-            . ($optional !== '' ? '?' : null);
+            . (!empty($optional) ? '?' : null);
     }
 
     /**

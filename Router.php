@@ -52,11 +52,11 @@ class Router
 
     /**
      * Reversed routing
-     *
      * Generate the URL for a named route. Replace regexes with supplied parameters
      *
      * @param string $routeName The name of the route.
      * @param array $params Associative array of parameters to replace placeholders with.
+     *
      * @return string The URL of the route with named parameters in place.
      */
     public function generate($routeName, array $params = [])
@@ -72,6 +72,7 @@ class Router
      * Match a given Request Url against stored routes
      * @param string $requestUrl
      * @param string $requestMethod
+     *
      * @return array|boolean Array with route information on success, false on failure (no match).
      */
     public function match($requestUrl = null, $requestMethod = null)
@@ -103,6 +104,7 @@ class Router
     /**
      * @param $method
      * @param $arguments
+     *
      * @throws RouterException
      */
     public function __call($method, $arguments)
@@ -121,6 +123,7 @@ class Router
     /**
      * Retrieves all routes.
      * Useful if you want to process or display routes.
+     *
      * @return array All routes.
      */
     public function getRoutes()
@@ -136,8 +139,8 @@ class Router
      *   );
      *
      * @param array|Traversable $routes
+     *
      * @return void
-     * @author Koen Punt
      */
     public function setRoutes($routes)
     {
@@ -154,6 +157,8 @@ class Router
     /**
      * Set the base path.
      * Useful if you are running your application from a subdirectory.
+     *
+     * @param $basePath
      */
     public function setBasePath($basePath)
     {
@@ -164,6 +169,7 @@ class Router
      * @param $routeName
      * @param $message
      * @param bool $cmpTo
+     *
      * @throws RouterException
      */
     private function handleException($routeName, $message, $cmpTo)
@@ -188,6 +194,9 @@ class Router
         return str_replace($this->basePath, '', strtok($requestUrl, '?'));
     }
 
+    /**
+     * @return RouterParser
+     */
     public function getParser()
     {
         return $this->parser;

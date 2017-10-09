@@ -68,34 +68,30 @@ class RouterParser implements RouterParserInterface
     }
 
     /**
-     * @param $method
-     * @param $requestMethod
+     * @param string $method
+     * @param string $requestMethod
      * @param string $routeString
-     * @param $requestUrl
+     * @param string $requestUrl
      *
      * @return mixed
      */
     public function methodMatch($method, $requestMethod, $routeString, $requestUrl)
     {
-        $method = strtolower($method);
-        $requestMethod = strtolower($requestMethod);
         $methods = explode('|', $method);
 
-        if (in_array($requestMethod, $methods)) {
+        if (preg_grep("/{$requestMethod}/i", $methods)) {
             if ($routeString == '*') {
                 return true;
             } elseif (isset($routeString[0]) && $routeString[0] == '@') {
-                $match = preg_match('`' . substr($routeString, 1) . '`u', $requestUrl, $this->params);
-                return $match;
+                return preg_match('`' . substr($routeString, 1) . '`u', $requestUrl, $this->params);
             } elseif (($position = strpos($routeString, '[')) === false) {
                 return strcmp($requestUrl, $routeString) === 0;
             }
-
             if (strncmp($requestUrl, $routeString, $position) !== 0) {
                 return false;
             }
-            $regex = $this->compileRoute($routeString, $requestUrl);
-            return preg_match($regex, $requestUrl, $this->params);
+
+            return preg_match($this->compileRoute($routeString, $requestUrl), $requestUrl, $this->params);
         }
 
         return false;
@@ -103,6 +99,11 @@ class RouterParser implements RouterParserInterface
 
     /**
      * Compile the regex for a given route (EXPENSIVE)
+     *
+     * @param $routeString
+     * @param $requestUrl
+     *
+     * @return string
      */
     private function compileRoute($routeString, $requestUrl)
     {
@@ -120,6 +121,15 @@ class RouterParser implements RouterParserInterface
         return "`^$route$`u";
     }
 
+    /**
+     * @param $matchTypes
+     * @param $pre
+     * @param $type
+     * @param $param
+     * @param $optional
+     *
+     * @return string
+     */
     private function getRoutePattern($matchTypes, $pre, $type, $param, $optional)
     {
         if (isset($matchTypes[$type])) {
@@ -168,6 +178,15 @@ class RouterParser implements RouterParserInterface
         return $route;
     }
 
+    /**
+     * @param $nPointer
+     * @param $jPointer
+     * @param $iPointer
+     * @param $routeString
+     * @param $requestUrl
+     *
+     * @return bool
+     */
     private function getRouteRegexCheck($nPointer, $jPointer, $iPointer, $routeString, $requestUrl)
     {
         $cPointer = $nPointer;
@@ -190,6 +209,9 @@ class RouterParser implements RouterParserInterface
         return $this->params;
     }
 
+    /**
+     * @return array
+     */
     public function getMatchTypes()
     {
         return $this->matchTypes;

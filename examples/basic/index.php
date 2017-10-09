@@ -9,7 +9,7 @@ require '../../RouterException.php';
 require '../../RouterParser.php';
 
 $parser = new \HakimCh\Http\RouterParser();
-$router = new \HakimCh\Http\Router($parser, '', [], $_SERVER);
+$router = new \HakimCh\Http\Router($parser, [], '', $_SERVER);
 $router->setBasePath('/examples/basic');
 $router->map('GET|POST', '/', 'home#index', 'home');
 $router->map('GET', '/users/', array('c' => 'UserController', 'a' => 'ListAction'));
@@ -24,23 +24,23 @@ $match = $router->match();
 
 <h3>Current request: </h3>
 <pre>
-     <?php
-     if ($match) {
-         foreach ($match as $key => $value) {
-             echo '<p>' . $key . ': ';
-             if (is_array($value)) {
-                 echo '<ul>';
-                 foreach ($value as $k => $v) {
-                     echo '<li>'.$k.': '.$v.'</li>';
-                 }
-                 echo '</ul>';
-             } else {
-                 echo $value;
+ <?php
+ if ($match) {
+     foreach ($match as $key => $value) {
+         echo '<p>' . $key . ': ';
+         if (is_array($value)) {
+             echo '<ul>';
+             foreach ($value as $k => $v) {
+                 echo '<li>'.$k.': '.$v.'</li>';
              }
-             echo '</p>';
+             echo '</ul>';
+         } else {
+             echo $value;
          }
+         echo '</p>';
      }
-     ?>
+ }
+ ?>
  </pre>
 
 <h3>Try these requests: </h3>

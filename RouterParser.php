@@ -81,15 +81,13 @@ class RouterParser implements RouterParserInterface
         $requestMethod = strtolower($requestMethod);
         $methods = explode('|', $method);
 
-        if(in_array($requestMethod, $methods)) {
-            if($routeString == '*') {
+        if (in_array($requestMethod, $methods)) {
+            if ($routeString == '*') {
                 return true;
-            }
-            elseif(isset($routeString[0]) && $routeString[0] == '@') {
+            } elseif (isset($routeString[0]) && $routeString[0] == '@') {
                 $match = preg_match('`' . substr($routeString, 1) . '`u', $requestUrl, $this->params);
                 return $match;
-            }
-            elseif (($position = strpos($routeString, '[')) === false) {
+            } elseif (($position = strpos($routeString, '[')) === false) {
                 return strcmp($requestUrl, $routeString) === 0;
             }
 
@@ -159,7 +157,7 @@ class RouterParser implements RouterParserInterface
                 break;
             }
             if ($regex === false) {
-                if(!$this->getRouteRegexCheck($nPointer, $jPointer, $iPointer, $routeString, $requestUrl)) {
+                if (!$this->getRouteRegexCheck($nPointer, $jPointer, $iPointer, $routeString, $requestUrl)) {
                     continue;
                 }
                 $jPointer++;

@@ -11,10 +11,10 @@ require '../../RouterParser.php';
 $parser = new \HakimCh\Http\RouterParser();
 $router = new \HakimCh\Http\Router($parser, '', [], $_SERVER);
 $router->setBasePath('/examples/basic');
-$router->map('GET|POST','/', 'home#index', 'home');
-$router->map('GET','/users/', array('c' => 'UserController', 'a' => 'ListAction'));
-$router->map('GET','/users/[i:id]', 'users#show', 'users_show');
-$router->map('POST','/users/[i:id]/[delete|update:action]', 'usersController#doAction', 'users_do');
+$router->map('GET|POST', '/', 'home#index', 'home');
+$router->map('GET', '/users/', array('c' => 'UserController', 'a' => 'ListAction'));
+$router->map('GET', '/users/[i:id]', 'users#show', 'users_show');
+$router->map('POST', '/users/[i:id]/[delete|update:action]', 'usersController#doAction', 'users_do');
 $router->map('GET', '/foo/[:controller]/[:action]', 'foo_action', 'foo_route');
 
 // match current request
@@ -25,17 +25,16 @@ $match = $router->match();
 <h3>Current request: </h3>
 <pre>
      <?php
-     if($match) {
-         foreach($match as $key => $value) {
+     if ($match) {
+         foreach ($match as $key => $value) {
              echo '<p>' . $key . ': ';
-             if(is_array($value)) {
+             if (is_array($value)) {
                  echo '<ul>';
-                 foreach($value as $k => $v) {
+                 foreach ($value as $k => $v) {
                      echo '<li>'.$k.': '.$v.'</li>';
                  }
                  echo '</ul>';
-             }
-             else {
+             } else {
                  echo $value;
              }
              echo '</p>';

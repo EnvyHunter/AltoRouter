@@ -16,6 +16,8 @@ class RouterTest extends PHPUnit_Framework_TestCase
      */
     protected $router;
     protected $closure;
+    protected $param1;
+    protected $param2;
 
     /**
      * Sets up the fixture, for example, opens a network connection.
@@ -25,6 +27,8 @@ class RouterTest extends PHPUnit_Framework_TestCase
     {
         $parser = new RouterParser();
         $this->router  = new Router($parser, [], '', []);
+        $this->param1  = ['controller' => 'test', 'action' => 'someaction'];
+        $this->param2  = ['controller' => 'test', 'action' => 'someaction', 'type' => 'json'];
         $this->closure = function () {
         };
     }
@@ -139,13 +143,10 @@ class RouterTest extends PHPUnit_Framework_TestCase
      */
     public function testGenerate()
     {
-        $params1 = ['controller' => 'test', 'action' => 'someaction'];
-        $params2 = ['controller' => 'test', 'action' => 'someaction', 'type' => 'json'];
-
         $this->router->map('GET', '/[:controller]/[:action]', $this->closure, 'foo_route');
         
-        $this->assertEquals('/test/someaction', $this->router->generate('foo_route', $params1));
-        $this->assertEquals('/test/someaction', $this->router->generate('foo_route', $params2));
+        $this->assertEquals('/test/someaction', $this->router->generate('foo_route', $this->param1));
+        $this->assertEquals('/test/someaction', $this->router->generate('foo_route', $this->param2));
     }
 
     /**
@@ -153,13 +154,10 @@ class RouterTest extends PHPUnit_Framework_TestCase
      */
     public function testGenerateWithOptionalUrlParts()
     {
-        $params1 = ['controller' => 'test', 'action' => 'someaction'];
-        $params2 = ['controller' => 'test', 'action' => 'someaction', 'type' => 'json'];
-
         $this->router->map('GET', '/[:controller]/[:action].[:type]?', $this->closure, 'bar_route');
         
-        $this->assertEquals('/test/someaction', $this->router->generate('bar_route', $params1));
-        $this->assertEquals('/test/someaction.json', $this->router->generate('bar_route', $params2));
+        $this->assertEquals('/test/someaction', $this->router->generate('bar_route', $this->param1));
+        $this->assertEquals('/test/someaction.json', $this->router->generate('bar_route', $this->param2));
     }
 
     /**

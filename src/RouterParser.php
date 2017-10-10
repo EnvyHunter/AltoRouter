@@ -42,7 +42,7 @@ class RouterParser implements RouterParserInterface
      *
      * @return string
      */
-    public function generate($basePath, $route, array $params)
+    public function generateUrl($basePath, $route, array $params)
     {
         $url = $basePath . $route;
 

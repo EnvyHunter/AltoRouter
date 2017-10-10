@@ -1,8 +1,7 @@
 <?php
 namespace HakimCh\Http;
 
-use HakimCh\Http\RouterException;
-use Traversable;
+use Iterator;
 
 class Router
 {
@@ -65,7 +64,7 @@ class Router
 
         $route = $this->namedRoutes[$routeName];
 
-        return $this->parser->generate($this->basePath, $route, $params);
+        return $this->parser->generateUrl($this->basePath, $route, $params);
     }
 
     /**
@@ -138,14 +137,14 @@ class Router
      *      array($method, $route, $target, $name)
      *   );
      *
-     * @param array|Traversable $routes
+     * @param array|Iterator $routes
      *
      * @return void
      */
     public function setRoutes($routes)
     {
-        if (!is_array($routes) && !$routes instanceof Traversable) {
-            throw new RouterException('Routes should be an array or an instance of Traversable');
+        if (!is_array($routes) && !$routes instanceof Iterator) {
+            throw new RouterException('Routes should be an array or an instance of Iterator');
         }
         if (!empty($routes)) {
             foreach ($routes as $route) {
@@ -200,5 +199,21 @@ class Router
     public function getParser()
     {
         return $this->parser;
+    }
+
+
+    public function getNamedRoutes()
+    {
+        return $this->namedRoutes;
+    }
+
+    public function getBasePath()
+    {
+        return $this->basePath;
+    }
+
+    public function setServer($server)
+    {
+        $this->server = $server;
     }
 }

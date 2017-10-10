@@ -19,7 +19,7 @@ interface RouterParserInterface
      *
      * @return string
      */
-    public function generate($basePath, $route, array $params);
+    public function generateUrl($basePath, $route, array $params);
 
     /**
      * Check if the request method match the route methods

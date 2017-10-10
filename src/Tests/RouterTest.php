@@ -149,9 +149,6 @@ class RouterTest extends PHPUnit_Framework_TestCase
         $this->assertEquals('/test/someaction', $this->router->generate('foo_route', $this->param2));
     }
 
-    /**
-     * @covers Router::generate
-     */
     public function testGenerateWithOptionalUrlParts()
     {
         $this->router->map('GET', '/[:controller]/[:action].[:type]?', $this->closure, 'bar_route');
@@ -160,9 +157,6 @@ class RouterTest extends PHPUnit_Framework_TestCase
         $this->assertEquals('/test/someaction.json', $this->router->generate('bar_route', $this->param2));
     }
 
-    /**
-     * @covers Router::generate
-     */
     public function testGenerateWithNonExistingRoute()
     {
         try {

@@ -41,11 +41,11 @@ You need PHP >= 5.6 to use Router.
 - [Process the request your preferred way](http://altorouter.com/usage/processing-requests.html)
 
 ## Contributors
+- [Hakim Ch](https://github.com/HakimCh)
 - [Danny van Kooten](https://github.com/dannyvankooten)
 - [Koen Punt](https://github.com/koenpunt)
 - [John Long](https://github.com/adduc)
 - [Niahoo Osef](https://github.com/niahoo)
-- [Hakim Ch](https://github.com/HakimCh)
 
 ## License
 

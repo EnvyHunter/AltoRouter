@@ -6,6 +6,10 @@
    "license": "MIT",
    "authors": [
       {
+         "name": "Hakim Ch",
+         "homepage": "https://github.com/HakimCh"
+      },
+      {
          "name": "Danny van Kooten",
          "email": "dannyvankooten@gmail.com",
          "homepage": "http://dannyvankooten.com/"
@@ -17,10 +21,6 @@
       {
          "name": "niahoo",
          "homepage": "https://github.com/niahoo"
-      },
-      {
-         "name": "Hakim Ch",
-         "homepage": "https://github.com/HakimCh"
       }
    ],
    "require": {
